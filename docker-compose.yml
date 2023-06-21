@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  api:
+    container_name: baby-book-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4044:4044'
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./assets/data/:/opt/app/assets/data/
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: baby-book-postgres
+    image: 'postgres'
+    env_file:
+      - ./database/database.env
+    volumes:
+      - ./database/data/postgres:/var/lib/postgresql/data/
+      - ./database/init:/docker-entrypoint-initdb.d
+    expose:
+      - '5432'
+    ports:
+      - 5434:5432
